@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Recommended shim for cross-browser WebRTC support. -->
+    <script src="https://hoangsi.com/stream/adapter-latest.js"></script>
+  </head>
+  <body>
+    <!-- `autoplay` will immediately show preview video. `muted` will mute the audio to avoid feedback noise. -->
+    <video id="red5pro-publisher" autoplay muted></video>
+    <!-- Exposes `red5prosdk` on the window global. -->
+    <script src="https://hoangsi.com/stream/red5pro-sdk.min.js"></script>
+    <!-- Example script below. -->
+   
+    <script>
+    (function (red5prosdk) {
+
+// Create a new instance of the WebRTC publisher.
+var publisher = new red5prosdk.RTCPublisher();
+
+// Initialize
+publisher.init({
+    protocol: 'wss',
+    port: 8083,
+    host: '115.733.208.183',
+    app: 'live',
+    streamName: 'mystream',
+    iceServers: [{urls: 'stun:stun2.l.google.com:19302'}],
+    streamMode: 'live',
+    mediaElementId: 'red5pro-publisher',
+    bandwidth: {
+      audio: 56,
+      video: 512
+    },
+    mediaConstraints: {
+      audio: true,
+      video: {
+        width: {
+          exact: 640
+        },
+        height: {
+          exact: 480
+        },
+        frameRate: {
+          min: 8,
+          max: 24
+        }
+      }
+    }
+  })
+  .then(function() {
+    // Invoke the publish action.
+    return publisher.publish();
+  })
+  .catch(function(error) {
+    // A fault occurred while trying to initialize and publish the stream.
+    console.error(error);
+  });
+
+})(window.red5prosdk);
+    </script>
+  </body>
+</html>
